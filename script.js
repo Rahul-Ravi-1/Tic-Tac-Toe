@@ -108,6 +108,13 @@ function ask(question) {
 }
 
 function parseMove(input) {
+  const trimmed = input.trim().toLowerCase();
+
+  // Small feature: allow quitting from the move prompt.
+  if (trimmed === "q" || trimmed === "quit") {
+    return { quit: true };
+  }
+
   const [rowText, colText] = input.trim().split(/\s+/);
   const row = Number(rowText) - 1;
   const col = Number(colText) - 1;
@@ -123,13 +130,18 @@ async function playRound() {
   while (true) {
     console.clear();
     console.log("Tic-Tac-Toe");
-    console.log("Enter moves as: row col (values 1-3)\n");
+    console.log("Enter moves as: row col (values 1-3), or 'q' to quit\n");
     GameController.printBoard();
     console.log("");
 
     const currentPlayer = GameController.getCurrentPlayer();
     const input = await ask(`${currentPlayer.name} (${currentPlayer.marker}) move: `);
     const move = parseMove(input);
+
+    if (move && move.quit) {
+      console.log("\nGame exited by player.");
+      return "quit";
+    }
 
     if (!move) {
       console.log("\nInvalid format. Use: row col (example: 2 3)");
@@ -170,7 +182,10 @@ async function playRound() {
 async function startGame() {
   while (true) {
     GameController.resetGame();
-    await playRound();
+    const result = await playRound();
+    if (result === "quit") {
+      break;
+    }
     const again = (await ask("\nPlay again? (y/n): ")).trim().toLowerCase();
     if (again !== "y") {
       break;
