@@ -222,3 +222,4 @@ console.log("- Getters/setters look like properties but run logic.");
 console.log("- Inheritance uses extends + super.");
 console.log("- #private fields/methods hide internal data/logic.");
 console.log("- static members belong to the class itself.");
+console.log("- ES6 modules help split features into reusable files.");
